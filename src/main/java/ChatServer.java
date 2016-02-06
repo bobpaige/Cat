@@ -24,8 +24,9 @@ public class ChatServer {
         String s;
         int portNumber;
         try {
-            System.out.println("Enter port number");
-            portNumber = scan.nextInt();
+            portNumber = Integer.parseInt(System.getProperty("port", "1337"));
+            //System.out.println("Enter port number for server: ");
+            //portNumber = scan.nextInt();
             System.out.println("Waiting for connection");
             ServerSocket socket = new ServerSocket(portNumber);
             Socket connection = socket.accept();
@@ -50,8 +51,6 @@ public class ChatServer {
                         System.out.println("Info command called by: " + "{Address of client}");
                     } else {
                         System.out.println("Unknown command called by: " + "{Address of client}");
-                        wout.write("Unknown command\n");
-                        wout.flush();
                     }
                 } else {
                     System.out.println("{Address of client}" + ": " + s);

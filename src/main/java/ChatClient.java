@@ -25,7 +25,7 @@ public class ChatClient {
         int portNumber;
         String s;
         try {
-            System.out.println("Enter port number for client");
+            System.out.print("Enter port number for client: ");
             portNumber = scan.nextInt();
             System.out.println("Opening connection");
             Socket socket = new Socket("127.0.0.1", portNumber);
