@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -6,6 +7,8 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.Socket;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Once the server accepts a remote connection, this class is instantiated for
@@ -13,14 +16,17 @@ import java.net.Socket;
  * 
  *
  */
-public class ConnectionHandler implements Runnable{
+public class ConnectionHandler implements Runnable {
 
+    private static Set<ConnectionHandler> allConnections = new HashSet<ConnectionHandler>();
     private Socket connection;
 
     public ConnectionHandler(Socket connection) {
         this.connection = connection;
-
+        allConnections.add(this);
     }
+
+    private Writer wout = null;
 
     @Override
     public void run() {
@@ -28,11 +34,11 @@ public class ConnectionHandler implements Runnable{
         String s;
         try {
             System.out.println("Accepted connection");
-            InputStream input = connection.getInputStream();
             OutputStream output = connection.getOutputStream();
+            InputStream input = connection.getInputStream();
             Reader rin = new InputStreamReader(input);
             BufferedReader brin = new BufferedReader(rin);
-            Writer wout = new OutputStreamWriter(output);
+            wout = new OutputStreamWriter(output);
 
             while (true) {
                 s = brin.readLine();
@@ -50,9 +56,13 @@ public class ConnectionHandler implements Runnable{
                         System.out.println("Unknown command called by: " + "{Address of client}");
                     }
                 } else {
-                    System.out.println(remoteName + ": " + s);
-                    wout.write(remoteName + ": " + s + "\n");
-                    wout.flush();
+                    // build the message
+                    String message = remoteName + ": " + s + "\n";
+
+                    // print message out to all clients
+                    for (ConnectionHandler conn : allConnections) {
+                        conn.send(message);
+                    }
                 }
             }
             System.out.println("Closing connection");
@@ -61,4 +71,9 @@ public class ConnectionHandler implements Runnable{
         }
     }
 
+    public void send(String message) throws IOException {
+//        System.out.print(message);
+        wout.write(message);
+        wout.flush();
+    }
 }
