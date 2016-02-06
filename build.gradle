@@ -6,7 +6,17 @@ repositories {
 }
 
 
+def jdkHome = System.getenv("JAVA_HOME")
+
 dependencies {
 	testCompile "junit:junit:4.+"
 
+    compile files("$jdkHome/lib/tools.jar")
+
 }
+
+
+task debug << {
+    configurations.compile.each { println it }
+}
+
