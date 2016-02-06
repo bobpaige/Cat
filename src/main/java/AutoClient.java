@@ -31,13 +31,16 @@ public class AutoClient {
                         // send an automatic message to the server
                         wout.write("sending line " + count++ + "\n");
                         wout.flush();
-                        
+
                         // read all messages from the server and output them
                         String in = null;
-                        while ((in=brin.readLine())!=null){
-                            System.out.println(in);
+                        if (brin.read() != -1) {
+                            while (brin.ready()) {
+                                in = brin.readLine();
+                                System.out.println(in);
+                            }
                         }
-                        
+
                         // wait before sending more messages
                         Thread.sleep(5000);
                     }

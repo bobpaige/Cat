@@ -65,9 +65,8 @@ public class ConnectionHandler implements Runnable {
                     }
                 }
             }
-            System.out.println("Closing connection");
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Closing connection");
         }
     }
 
